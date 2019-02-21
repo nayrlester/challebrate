@@ -1,0 +1,345 @@
+
+<% include ../layout/header.html %>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<% include ../layout/head.html %>
+<% include ../element/menu.html %>
+
+<% include ../element/top_nav.html %>
+
+      <div class="app-content content container-fluid">
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Students List <button class="btn btn-outline-success" onclick="newStudent()"><i class="icon-plus3"></i></button></h4>
+                            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-info">
+                                        <tr>
+                                            <th>Number</th>
+                                            <th>Student #</th>
+                                            <th>Fullname</th>
+                                            <th>Course</th>
+                                            <th>Year</th>
+                                            <th>Student Type</th>
+                                            <th>Remarks</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      	<% var i = 1; row.forEach(function(row){ %>
+                                            <tr>
+                                                <td><%- i++ %></td>
+                                                <td><%- row.s_stud_num %></td>
+                                                <td><%- row.s_fullname %></td>
+                                                <td><%- row.course_desc %></td>
+                                                <td><%- row.year_desc %></td>
+                                                <td><%- row.s_stud_type %></td>
+                                                <td><%- row.s_remarks %></td>
+                                                <td>
+                                                	<button class="btn btn-sm btn-outline-info" onclick="editStudent('<%= row.id %>')"><i class="icon-edit"></i></button>
+                                                	<button class="btn btn-sm btn-outline-danger" onclick="removeStudent('<%= row.id %>')"><i class="icon-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+<% include ../layout/footer.html %>
+<script>
+    function newStudent(){
+        $('#StudentAdd').modal('show');
+        $('.modal-title').text('Add New Student');
+    }
+
+    function editStudent(id){
+        $('#stud_id_edit').val(id);
+        $('#StudentEdit').modal('show');
+        $('.modal-title').text('Update Student Info');
+        $.ajax({
+            method:"GET",
+            url:"/getStudent/"+id,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                var data = result.data;
+                $('#stud_num1').val(data[0].s_stud_num);
+                $('#fullname1').val(data[0].s_fullname);
+                $("#course1 option:contains("+data[0].course_desc+")").attr("selected",true);
+                $("#year1 option:contains("+data[0].year_desc+")").attr("selected",true);
+                $('#stud_type1').val(data[0].s_stud_type);
+                $('#remarks1').val(data[0].s_remarks);
+            }
+        })
+    }
+
+    function removeStudent(id){
+        $('#stud_id').val(id);
+        $('#StudentRemove').modal('show');
+        $('.modal-title').text('Remove Student');
+    }
+
+    function deleteStud(){
+        $('#canceldelete').addClass('disabled');
+        $('#removeStudent').addClass('disabled');
+        $('#removeStudent').text('Please wait');
+        var id = $('#stud_id').val();
+        var data = {id:id};
+
+        $.ajax({
+            method:"POST",
+            url:"/deleteStudent",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'Student Successfully Remove',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    }
+
+    function submit(){
+
+        $('#cancelpost').addClass('disabled');
+        $('#saveStudent').addClass('disabled');
+        $('#saveStudent').text('Please wait');
+
+
+
+        var stud_num = $('#stud_num').val();
+        var fullname = $('#fullname').val();
+        var course = $('#course').val();
+        var year = $('#year').val();
+        var stud_type = $('#stud_type').val();
+        var remarks = $('#remarks').val();
+       
+        var data = {stud_num:stud_num,fullname:fullname,course:course,year:year,stud_type:stud_type,remarks:remarks};
+
+         $.ajax({
+            method:"POST",
+            url:"/addStudent",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'New Student Added Successfully',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    };
+
+    function edit(){
+
+        $('#cancelEdit').addClass('disabled');
+        $('#editStudent').addClass('disabled');
+        $('#editStudent').text('Please wait');
+
+        var stud_num = $('#stud_num1').val();
+        var fullname = $('#fullname1').val();
+        var course = $('#course1').val();
+        var year = $('#year1').val();
+        var stud_type = $('#stud_type1').val();
+        var remarks = $('#remarks1').val();
+        var id = $('#stud_id_edit').val();        
+        var data = {id:id,stud_num:stud_num,fullname:fullname,course:course,year:year,stud_type:stud_type,remarks:remarks};
+
+         $.ajax({
+            method:"POST",
+            url:"/editStudent",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'Student Updated Successfully',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    };
+</script>
+
+    <div class="modal fade text-xs-left" id="StudentAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+			  </div>
+			  <div class="modal-body">
+				 <fieldset class="form-group position-relative has-icon-left mb-1">
+					<input type="text" class="form-control" id="stud_num" name="stud_num" placeholder="Student Number" required>
+				</fieldset>
+				<fieldset class="form-group position-relative has-icon-left mb-1">
+					<input type="text" class="form-control" id="fullname" name="fullname" placeholder="Fullname" required>
+				</fieldset>
+				<fieldset class="form-group position-relative has-icon-left mb-1">
+                    <select id="course" class="form-control">
+                        <option disabled selected> Select Course</option>
+                    </select>
+				</fieldset>
+				<fieldset class="form-group position-relative has-icon-left mb-1">
+                    <select id="year" class="form-control">
+                        <option disabled selected> Select Year</option>
+                    </select>
+				</fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" class="form-control" id="stud_type" name="stud_type" placeholder="Student Type" required>
+                </fieldset>
+				<fieldset class="form-group position-relative has-icon-left mb-1">
+					<input type="text" class="form-control" id="remarks" name="remarks" placeholder="Remarks" required>
+				</fieldset>
+			  </div>
+			  <div class="modal-footer">
+				<button type="submit" class="btn btn-outline-primary" onclick="submit()" id="saveStudent">Submit</button>
+				<button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="cancelpost">Cancel</button>
+			  </div>
+			</div>
+	  </div>
+	</div>
+
+    <div class="modal fade text-xs-left" id="StudentEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+            <input type="hidden" id="stud_id_edit">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+              </div>
+              <div class="modal-body">
+                 <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" class="form-control" id="stud_num1" name="stud_num" placeholder="Student Number" required>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" class="form-control" id="fullname1" name="fullname" placeholder="Fullname" required>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <select id="course1" class="form-control">
+                        <option disabled selected> Select Course</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <select id="year1" class="form-control">
+                        <option disabled selected> Select Year</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" class="form-control" id="stud_type1" name="stud_type" placeholder="Student Type" required>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" class="form-control" id="remarks1" name="remarks" placeholder="Remarks" required>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" onclick="edit()" id="editStudent">Submit</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="cancelEdit">Cancel</button>
+              </div>
+            </div>
+      </div>
+    </div>
+
+    <div class="modal fade text-xs-left" id="StudentRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+            <input type="hidden" id="stud_id">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+              </div>
+              <div class="modal-body">
+                 <h3>Are you sure you want to remove this student?</h3>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" onclick="deleteStud()" id="removeStudent">Yes</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="canceldelete">No</button>
+              </div>
+            </div>
+      </div>
+    </div>
+
+<% include ../layout/foot.html %>
+

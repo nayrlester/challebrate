@@ -1,0 +1,126 @@
+
+<% include ../layout/header.html %>
+<% include ../layout/head.html %>
+<% include ../element/menu.html %>
+
+<% include ../element/top_nav.html %>
+
+      <div class="app-content content container-fluid">
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Submit Assignment <button class="btn btn-outline-success" onclick="addAssignment()"><i class="icon-plus3"></i></button></h4>
+                            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-info">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Student Number</th>
+                                            <th>Fullname</th>
+                                            <th>Uploaded Files</th>
+                                            <th>Date Submitted</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     	<% var i = 1; row.forEach(function(row){ %>
+                                            <tr>
+                                                <td><%- i++ %></td>
+                                                <td><%- row.student_num %></td>
+                                                <td><%- row.fullname %></td>
+                                                <td><%- row.files %></td>
+                                                <td><%- row.date_created %></td>
+                                                <td>
+                                                	<button class="btn btn-sm btn-outline-info" onclick="editAssignment('<%= row.id %>')"><i class="icon-edit"></i></button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="removeAssignment('<%= row.id %>')"><i class="icon-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    
+<% include ../layout/footer.html %>
+<script>
+    $(document).ready(function(){
+        const pathname = window.location.pathname;
+        const assign_id = pathname.split('/')[2];
+        $('#assignment_id').val(assign_id);
+    });
+
+    function addAssignment(){
+        $('#assignmentAdd').modal('show');
+        $('.modal-title').text('Submit Assignment');
+    }
+
+    $('form#applicationForm').submit(function(e){
+        $('#cancelpost').addClass('disabled');
+        $('#saveAssignment').addClass('disabled');
+        $('#saveAssignment').text('Please wait');
+    });
+
+</script>
+<div class="modal fade text-xs-left" id="assignmentAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+            </div>
+           <form action="/submitAssignment" enctype="multipart/form-data" method="POST" id="applicationForm">    
+                <div class="modal-body">
+                    <input type="hidden" name="assignment_id" id="assignment_id">
+                    <fieldset class="form-group position-relative has-icon-left mb-1">
+                        <label>Student Number:</label>
+                        <input type="text" class="form-control" id="stud_num" name="stud_num" placeholder="Student Number" required>
+                    </fieldset>
+                    <fieldset class="form-group position-relative has-icon-left mb-1">
+                        <label>Fullname:</label>
+                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Fullname" required>
+                    </fieldset>
+                    <div class="form-group">
+                        <label>Select File</label>
+                        <label id="projectinput7" class="file center-block">
+                            <input type="file" id="file" name="myFile">
+                            <span class="file-custom"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-primary" id="saveAssignment">Submit</button>
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="cancelpost">Cancel</button>
+                </div>
+            </form>
+        </div>
+  </div>
+</div>
+
+
+    
+<% include ../layout/foot.html %>
+

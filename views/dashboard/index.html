@@ -1,0 +1,116 @@
+
+<% include ../layout/header.html %>
+<% include ../layout/head.html %>
+<% include ../element/menu.html %>
+
+<% include ../element/top_nav.html %>
+
+      <div id="overlay">
+        <div id="progstat"></div>
+        <div id="progress"></div>
+      </div>
+
+      <div id="container">
+        <div class="app-content content container-fluid">
+          <div class="content-wrapper">
+            <div class="content-header row">
+            </div>
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-6 col-xs-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="media">
+                                    <div class="p-2 text-xs-center bg-success bg-darken-2 media-left media-middle">
+                                        <i class="icon-user5 font-large-2 white"></i>
+                                    </div>
+                                    <div class="p-2 bg-success white media-body">
+                                        <h5>Students</h5>
+                                        <h5 class="text-bold-400" id="students"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-xs-12">   
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="media">
+                                    <div class="p-2 text-xs-center bg-primary bg-darken-2 media-left media-middle">
+                                        <i class="icon-book2 font-large-2 white"></i>
+                                    </div>
+                                    <div class="p-2 bg-primary white media-body">
+                                        <h5>Assignments</h5>
+                                        <h5 class="text-bold-400" id="assignment"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-xs-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="media">
+                                    <div class="p-2 text-xs-center bg-pink bg-darken-2 media-left media-middle">
+                                        <i class="icon-bookmark3 font-large-2 white"></i>
+                                    </div>
+                                    <div class="p-2 bg-pink white media-body">
+                                        <h5>Discussions</h5>
+                                        <h5 class="text-bold-400" id="discussion"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                    </div>
+                </div>
+            </div>
+          </div>
+
+
+        </div>
+    </div>
+<% include ../layout/footer.html %>
+<script>
+    $(document).ready(function(){
+
+        $.ajax({
+            method:"GET",
+            url:"/totalStudent",
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                var data = result.data;
+                $('#students').append(data[0].total);
+            }
+        })
+
+        $.ajax({
+            method:"GET",
+            url:"/totalAssignment",
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                var data = result.data;
+                $('#assignment').append(data[0].total);
+            }
+        })
+
+        $.ajax({
+            method:"GET",
+            url:"/totalDiscussion",
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                var data = result.data;
+                $('#discussion').append(data[0].total);
+            }
+        })
+    });
+</script>
+<% include ../layout/foot.html %>
+

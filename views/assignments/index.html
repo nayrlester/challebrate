@@ -1,0 +1,351 @@
+
+<% include ../layout/header.html %>
+<% include ../layout/head.html %>
+<% include ../element/menu.html %>
+
+<% include ../element/top_nav.html %>
+
+      <div class="app-content content container-fluid">
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Assignments <button class="btn btn-outline-success" onclick="addAssignment()"><i class="icon-plus3"></i></button></h4>
+                            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-info">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Course</th>
+                                            <th>Year</th>
+                                            <th>Subject</th>
+                                            <th>Description</th>
+                                            <th>Date Created</th>
+                                            <th>Deadline</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     	<% var i = 1; row.forEach(function(row){ %>
+                                            <tr>
+                                                <td><%- i++ %></td>
+                                                <td><%- row.course_desc %></td>
+                                                <td><%- row.year_desc %></td>
+                                                <td><%- row.a_subject %></td>
+                                                <td><%- row.a_description %></td>
+                                                <td><%- row.a_created_at %></td>
+                                                <td><%- row.a_deadline %></td>
+                                                <td>
+                                                	<button class="btn btn-sm btn-outline-info" onclick="editAssignment('<%= row.id %>')"><i class="icon-edit"></i></button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="removeAssignment('<%= row.id %>')"><i class="icon-trash"></i></button>
+                                                    <a class="btn btn-sm btn-outline-primary" href="/viewAssignment/<%= row.id %>"><i class="icon-eye"></i></a>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    
+<% include ../layout/footer.html %>
+<script>
+    function addAssignment(){
+
+        $('#assignmentAdd').modal('show');
+        $('.modal-title').text('Add New Assignment');
+
+    }
+
+    function editAssignment(id){
+        $('#assign_id_edit').val(id);
+        $('#assignmentEdit').modal('show');
+        $('.modal-title').text('Update Assignment Info');
+        $.ajax({
+            method:"GET",
+            url:"/getAssignment/"+id,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                var data = result.data;
+                console.log(result)
+                $('#subject1').val(data[0].a_subject);
+                $('#desc1').val(data[0].a_description);
+                $("#course1 option:contains("+data[0].course_desc+")").attr("selected",true);
+                $("#year1 option:contains("+data[0].year_desc+")").attr("selected",true);
+                $('#deadline1').val(data[0].a_deadline);
+            }
+        })
+    }
+
+    function removeAssignment(id){
+        $('#assignment_id').val(id);
+        $('#AssignmentRemove').modal('show');
+        $('.modal-title').text('Remove Assignment');
+    }
+
+    function submit(){
+
+        $('#cancelpost').addClass('disabled');
+        $('#saveAssignment').addClass('disabled');
+        $('#saveAssignment').text('Please wait');
+
+
+
+        var subject = $('#subject').val();
+        var course = $('#course').val();
+        var year = $('#year').val();
+        var desc = $('#desc').val();
+        var deadline = $('#deadline').val();
+       
+        var data = {subject:subject,course:course,year:year,desc:desc,deadline:deadline};
+
+         $.ajax({
+            method:"POST",
+            url:"/addAssignment",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'New Student Added Successfully',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    };
+
+    function deleteAssignment(){
+        $('#canceldelete').addClass('disabled');
+        $('#removeAssignment').addClass('disabled');
+        $('#removeAssignment').text('Please wait');
+        var id = $('#assignment_id').val();
+        var data = {id:id};
+
+        $.ajax({
+            method:"POST",
+            url:"/deleteAssignment",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'Student Successfully Remove',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    }
+
+
+    function edit(){
+
+        $('#cancelEdit').addClass('disabled');
+        $('#editAssignment').addClass('disabled');
+        $('#editAssignment').text('Please wait');
+
+        var subject = $('#subject1').val();
+        var desc = $('#desc1').val();
+        var course = $('#course1').val();
+        var year = $('#year1').val();
+        var deadline = $('#deadline1').val();
+        var id = $('#assign_id_edit').val();        
+        var data = {id:id,subject:subject,desc:desc,course:course,year:year,deadline:deadline};
+
+         $.ajax({
+            method:"POST",
+            url:"/editAssignment",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'Assignment Updated Successfully',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    };
+</script>
+
+    <div class="modal fade text-xs-left" id="assignmentAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+              </div>
+              <div class="modal-body">
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Course:</label>
+                    <select id="course" class="form-control">
+                        <option disabled selected> Select Course</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Year:</label>
+                    <select id="year" class="form-control">
+                        <option disabled selected> Select Year</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Subject:</label>
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Description:</label>
+                    <textarea class="form-control" rows="5" id="desc" placeholder="Description"></textarea>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Deadline:</label>
+                    <input type="date" class="form-control" id="deadline" name="deadline" placeholder="Deadline" required>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" onclick="submit()" id="saveAssignment">Submit</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="cancelpost">Cancel</button>
+              </div>
+            </div>
+      </div>
+    </div>
+
+    <div class="modal fade text-xs-left" id="assignmentEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+            <input type="hidden" id="assign_id_edit">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+              </div>
+              <div class="modal-body">
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Course:</label>
+                    <select id="course1" class="form-control">
+                        <option disabled selected> Select Course</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Year:</label>
+                    <select id="year1" class="form-control">
+                        <option disabled selected> Select Year</option>
+                    </select>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Subject:</label>
+                    <input type="text" class="form-control" id="subject1" name="subject" placeholder="Subject" required>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Description:</label>
+                    <textarea class="form-control" rows="5" id="desc1" placeholder="Description"></textarea>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <label>Deadline:</label>
+                    <input type="date" class="form-control" id="deadline1" name="deadline" placeholder="Deadline" required>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" onclick="edit()" id="editAssignment">Submit</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="cancelEdit">Cancel</button>
+              </div>
+            </div>
+      </div>
+    </div>
+
+    <div class="modal fade text-xs-left" id="AssignmentRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+            <input type="hidden" id="assignment_id">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel2"><i class="icon-road2"></i> </h4>
+              </div>
+              <div class="modal-body">
+                 <h3>Are you sure you want to remove this assignment?</h3>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" onclick="deleteAssignment()" id="removeAssignment">Yes</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="canceldelete">No</button>
+              </div>
+            </div>
+      </div>
+    </div>
+
+<% include ../layout/foot.html %>
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-textdirection="ltr" class="loading">
+  	<head>
+  		<title>Dashboard</title>
+		<link rel="stylesheet" type="text/css" href="app-assets/css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/fonts/icomoon.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/fonts/flag-icon-css/css/flag-icon.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/vendors/css/extensions/pace.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/bootstrap-extended.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/app.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/colors.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/core/menu/menu-types/vertical-menu.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/core/menu/menu-types/vertical-overlay-menu.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/pages/login-register.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/style.css">
+	</head>
+	<body data-open="click" data-menu="vertical-menu" data-col="1-column" class="vertical-layout vertical-menu 1-column  blank-page blank-page">
+		<div class="app-content content container-fluid">
+		    <div class="content-wrapper">
+		        <div class="content-header row">
+
+		        </div>
+		        <div class="content-body">
+					<section class="flexbox-container">
+					    <div class="col-md-4 offset-md-4 col-xs-10 offset-xs-1  box-shadow-2 p-0">
+					        <div class="card border-grey border-lighten-3 m-0">
+					            <div class="card-header no-border">
+					                <div class="card-title text-xs-center">
+					                    <div class="p-1"><img class="img-responsive" src="/img/challebrateLogo.png" width="250px" height="210px" alt="branding logo"></div>
+					                    <h2 class="title">Challebrate</h2>
+					                </div>
+					                <h6 class="card-subtitle line-on-side text-muted text-xs-center font-small-3 pt-2"><span>User Login</span></h6>
+					            </div>
+
+					            <div class="card-body collapse in">
+					                <div class="card-block">
+				                        <fieldset class="form-group position-relative has-icon-left mb-0">
+				                            <input type="text" class="form-control form-control-lg input-lg" id="name" placeholder="Your Username" required>
+				                            <div class="form-control-position">
+				                                <i class="icon-head"></i>
+				                            </div>
+				                        </fieldset>
+				                        <br>
+				                        <fieldset class="form-group position-relative has-icon-left">
+				                            <input type="password" class="form-control form-control-lg input-lg" id="pass" placeholder="Enter Password" required>
+				                            <div class="form-control-position">
+				                                <i class="icon-key3"></i>
+				                            </div>
+				                        </fieldset>
+				                        <fieldset class="form-group row">
+				                            
+				                        </fieldset>
+				                        <button type="submit" class="btn btn-primary btn-lg btn-block" onclick="login()" id="loginSession"><i class="icon-unlock2"></i> Login</button>
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</section>
+		        </div>
+		    </div>
+		</div>
+
+		<script src="app-assets/js/core/libraries/jquery.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/tether.min.js" type="text/javascript"></script>
+		<script src="app-assets/js/core/libraries/bootstrap.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/unison.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/blockUI.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/jquery.matchHeight-min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/ui/screenfull.min.js" type="text/javascript"></script>
+		<script src="app-assets/vendors/js/extensions/pace.min.js" type="text/javascript"></script>
+		<script src="app-assets/js/core/app-menu.js" type="text/javascript"></script>
+		<script src="app-assets/js/core/app.js" type="text/javascript"></script>
+    	<script src="/app-assets/js/sweetalert2.all.js" type="text/javascript"></script>
+		<script>
+			function login(){
+				var name = $('#name').val();
+				var pass = $('#pass').val();
+				var data = {name:name,pass:pass};
+
+				$('#loginSession').addClass('disabled');
+        		$('#loginSession').text('Please wait');
+
+        		$.ajax({
+		            method:"POST",
+		            url:"/login",
+		            data: data,
+		            enctype: 'multipart/form-data',
+		            cache: false,
+		            success:function(result){
+		                if (result.success == true) {
+		                    Swal({
+		                        title: 'Success!',
+		                        text: 'Login Successfully',
+		                        type: 'success',
+		                    }).then(function() {
+		                        setTimeout(function() {
+		                            location.href="/home"
+		                        }, 1000);
+		                    })
+		                }else{
+		                    Swal({
+		                          title: 'warning!',
+		                          text: 'Error! Contact the Admin',
+		                          type: 'warning',
+		                    }).then(function() {
+		                        setTimeout(function() {
+		                            window.location.reload(true);
+		                        }, 1000);
+		                    })
+		                }
+		            }
+		        })
+			}
+		</script>
+
+ 	</body>
+</html>
+

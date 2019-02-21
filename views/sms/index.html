@@ -1,0 +1,117 @@
+
+<% include ../layout/header.html %>
+<% include ../layout/head.html %>
+<% include ../element/menu.html %>
+
+<% include ../element/top_nav.html %>
+
+      <div class="app-content content container-fluid">
+      <div class="content-wrapper">
+        <div class="content-header row">
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Send SMS</h4>
+                            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="card-block">
+                                <fieldset class="form-group position-relative has-icon-left mb-0">
+                                    <input type="text" class="form-control form-control-lg input-lg" id="from" placeholder="From:" required="true">
+                                    <div class="form-control-position">
+                                        <i class="icon-head"></i>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="form-group position-relative has-icon-left mb-0">
+                                    <input type="text" class="form-control form-control-lg input-lg" id="to" placeholder="To:" required="true">
+                                    <div class="form-control-position">
+                                        <i class="icon-head"></i>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="form-group position-relative has-icon-left">
+                                    <textarea id="messages" rows="10" cols="100" class="form-control" placeholder="Messages"></textarea>
+                                </fieldset>
+                                <fieldset class="form-group row">
+                                    
+                                </fieldset>
+                                <div class="footer">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer" align="center">
+                            <div class="col-md-9">
+                                
+                            </div>
+                            <div class="col-md-3 pull-right">
+                                <button type="submit" class="btn btn-primary btn-lg btn-block" onclick="sendSMS()" id="sendSMS"><i class="icon-send"></i> Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    
+<% include ../layout/footer.html %>
+<script>
+   function sendSMS(){
+
+        $('#sendSMS').addClass('disabled');
+        $('#saveDiscussion').text('Please wait');
+
+        var from = $('#from').val();
+        var to = $('#to').val();
+        var messages = $('#messages').val();
+       
+        var data = {from:from,to:to,messages:messages};
+
+         $.ajax({
+            method:"POST",
+            url:"/send",
+            data: data,
+            enctype: 'multipart/form-data',
+            cache: false,
+            success:function(result){
+                if (result.success == true) {
+                    Swal({
+                        title: 'Success!',
+                        text: 'SMS Send Successfully',
+                        type: 'success',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }else{
+                    Swal({
+                          title: 'warning!',
+                          text: 'Error! Contact the Admin',
+                          type: 'warning',
+                    }).then(function() {
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 1000);
+                    })
+                }
+            }
+        })
+    };
+</script>
+<% include ../layout/foot.html %>
+
+    
